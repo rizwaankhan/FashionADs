@@ -1,0 +1,222 @@
+{% load static %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Ammar">
+    <meta name="keyword" content="Dashboard, Admin">
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+    <title> {% blocktrans %}Brand List {% endblocktrans %}</title>
+
+    <link href="{% static 'css/bootstrap-reset.css' %}" rel="stylesheet">
+    <!--external css-->
+    <link href="{% static 'assets/font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
+    <!--    <link rel="icon" href="{% static session.Icon %}?v=2" type="image/png"  sizes="16x16" />-->
+    <!--right slidebar-->
+    <link href="{% static 'css/slidebars.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style-responsive.css' %}" rel="stylesheet" />
+    <script src="{%  static 'sweetalert/sweetalert.min.js' %}"></script>
+    <!--dynamic table-->
+    <link href="{% static 'assets/advanced-datatable/media/css/demo_page.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/advanced-datatable/media/css/demo_table.css' %}" rel="stylesheet" />
+    <link rel="stylesheet" href="{% static 'assets/data-tables/DT_bootstrap.css' %}" />
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+    <style>
+  .adv-table table tr td {
+    max-width: 200px !important;
+}
+</style>
+</head>
+<body>
+<section id="container" class="">
+    <!--header start-->
+    <header class="header white-bg">
+        {% include 'header_menu_admin.html' %}
+    </header>
+    <!--header end-->
+    <!--sidebar start-->
+    {% include 'side_menu_admin.html' %}
+    <!--sidebar end-->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <!-- page start-->
+            {% if msg %}
+            <div id="container-flip" >
+                <div>{{msg|safe}}</div>
+            </div>
+            {% else %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="card">
+                        <header class="card-header">
+                            {% blocktrans %} Brand List {% endblocktrans %}
+                        </header>
+                        <div class="card-body">
+                            {% if messages %}
+                            <div class="col-12">
+                                {% for message in messages %}
+                                <div class="alert alert-dismissible fade show {{ message.tags }}" id="alert" role="alert">
+                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                                    <strong> {{ message }} <i class="fa {{ message.tags }} bold fa-lg ml-2"></i></strong>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <form action="{% url 'brand_list'%}"  id="file-upload-form"  method="post" >
+                                <a href="/Admin/ReindexBrand">Reindex All AU NZ Brands</a>
+
+                                <div class="form-row">
+                                    <b class="ml-1 mb-2 ">Filter by store:</b>
+                                </div>
+                                <div class="form-row ml-0">
+                                    {% csrf_token %}
+                                    <select data-val="true" data-val-number="The field StoreId must be a number."
+                                            id="storeIds" name="storeId"
+                                            onChange="window.location.href = &#39;/admin_site/brand_list?storeId=&#39; + this.value;"
+                                            class="js-example-basic-single">
+                                        <option disabled selected value="">Select a Store</option>
+                                        {% for r in data %}
+                                            <option {% if r.0 == storeId %} selected {% endif %}
+                                                                            value="{{ r.0 }}">{{ r.1 }}
+                                                - {{ r.2 }}</option>
+                                        {% endfor %}
+
+                                    </select>
+                                </div>
+                                <br/>
+                                Show:
+                                <a href="/admin_site/BrandList?ShowSimilarBrand=True">Similar Brands</a> <br/>
+
+                            </form>
+                            {% if brand_data %}
+
+                            <div><a href="#UniqueBrands">Unique Brands ({{len_brand_data}})</a> | <a href="#ProductsWithoutBrand">Products Without Brand ({{len_no_brand_data}})</a></div>
+                            <div id="UniqueBrand">Showing {{len_brand_data}} unique brands</div>
+                            {% endif %}
+                            <div class="table-responsive  p-2">
+                                <div class="adv-table">
+                                    {% if not  brand_data %}
+                                    <div id="container-flip" >
+                                        <div>{% blocktrans %}No Records Yet{% endblocktrans %}</div>
+                                    </div>
+                                    {% else %}
+                                    <table class=" display table table-bordered table-striped dynamic-table" >
+                                        <thead >
+                                        <tr>
+                                            <th>
+                                                Name
+                                            </th>
+                                            <th>
+                                                Product Count
+                                            </th>
+                                            <th>
+                                                Sample Product Url
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="tablebody">
+                                        {% for r in brand_data %}
+                                        <tr>
+                                            <td>{{r.0}} </td>
+                                            <td>{{r.1}} </td>
+                                            <td><a href="{{r.2}}" target="_blank">{{r.2}}</a></td>
+
+                                        </tr>
+                                        {% endfor %}
+
+                                        </tbody>
+                                    </table>
+                                    <div class="" id="ProductsWithoutBrand">Showing {{len_no_brand_data}} products without brand</div>
+
+                                    {% endif %}
+
+                                    <table class=" display table table-bordered table-striped dynamic-table" >
+                                        <thead >
+                                        <tr>
+                                            <th>
+                                                Name
+                                            </th>
+                                            <th>
+                                                Product Url
+                                            </th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="tablebody">
+                                        {% for r in no_brand_data %}
+                                        <tr>
+                                            <td>{{r.0}} </td>
+                                            <td><a href="{{r.1}}" target="_blank">{{r.1}}</a></td>
+                                        </tr>
+                                        {% endfor %}
+
+                                        </tbody>
+                                    </table>
+
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            {%endif%}
+            <!-- page end-->
+        </section>
+    </section>
+    <!--main content end-->
+    <!-- Right Slidebar start -->
+    <!-- Right Slidebar end -->
+    {% include 'Footer.html' %}
+    <!--footer end-->
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+<script src="{% static 'js/jquery.js' %}"></script>
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery.scrollTo.min.js' %}"></script>
+<script src="{% static 'js/jquery.nicescroll.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script class="include" type="text/javascript" src="{% static 'js/jquery.dcjqaccordion.2.7.js' %}"></script>
+<!--custom switch-->
+<script src="{% static 'js/bootstrap-switch.js' %}"></script>
+<!--custom tagsinput-->
+<script src="{% static 'js/jquery.tagsinput.js' %}"></script>
+<!--custom checkbox & radio-->
+<script src="{% static 'js/advanced-form-components.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/bootstrap-inputmask/bootstrap-inputmask.min.js' %}"></script>
+<script src="{% static 'js/respond.min.js' %}" ></script>
+<!--right slidebar-->
+<script src="{% static 'js/slidebars.min.js' %}"></script>
+<!--common script for all pages-->
+<script src="{% static 'js/common-scripts.js' %}"></script>
+<!--script for this page-->
+<script src="{% static 'js/form-component.js' %}"></script>
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>-->
+<link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+<script src="{%  static 'js/select2.min.js' %}"></script>
+<script type="text/javascript" language="javascript" src="{% static 'assets/advanced-datatable/media/js/jquery.dataTables.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/data-tables/DT_bootstrap.js' %}"></script>
+<script src="{% static 'js/dynamic_table_init.js' %}"></script>
+<link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+<script src="{% static 'jquery.min.js' %}"></script>
+<script type="text/javascript">
+     $(document).ready(function() {
+$(".js-example-basic-single").select2();
+});
+$(document).ready(function() {
+  $selectElement = $('.js-example-basic-single').select2({
+    placeholder: "Select a Store",
+    allowClear: true
+  });
+});
+</script>
+</body>
+</html>

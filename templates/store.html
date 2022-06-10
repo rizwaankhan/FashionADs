@@ -1,0 +1,351 @@
+{% load static %}
+{% load i18n %}
+<html lang="en">
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Ammar">
+    <meta name="keyword" content="Dashboard, Admin">
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+    <title> {% blocktrans %}Store{% endblocktrans %}</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap-reset.css' %}" rel="stylesheet">
+    <!--external css-->
+    <link href="{% static 'assets/font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
+    <!--    <link rel="icon" href="{% static session.Icon %}?v=2" type="image/png"  sizes="16x16" />-->
+    <!--right slidebar-->
+    <link href="{% static 'css/slidebars.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style-responsive.css' %}" rel="stylesheet" />
+    <script src="{%  static 'sweetalert/sweetalert.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+</head>
+<body>
+<section id="container" class="">
+    <!--header start-->
+    <header class="header white-bg">
+        {% include 'header_menu_admin.html' %}
+    </header>
+    <!--header end-->
+    <!--sidebar start-->
+    {% include 'side_menu_admin.html' %}
+
+    <!--sidebar end-->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <!-- page start-->
+            {% if msg %}
+            <div id="container-flip" >
+                <div>{{msg|safe}}</div>
+            </div>
+            {% else %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="card">
+                        <header class="card-header">
+                            {% blocktrans %} Store{% endblocktrans %}
+                        </header>
+                        <div class="card-body">
+                            {% if messages %}
+                            <div class="col-12">
+                                {% for message in messages %}
+                                <div class="alert alert-dismissible fade show {{ message.tags }}" id="alert" role="alert">
+                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                                    <strong> {{ message }} <i class="fa {{ message.tags }} bold fa-lg ml-2"></i></strong>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <form  {% if update == "yes" %} action="{% url 'StoreUpdate' %}" {% else %}
+                                                            action="{% url 'Store' %}" {% endif %}
+                                                            id="file-upload-form" method="post">
+                                <div class="form-row">
+                                    {% csrf_token %}
+                                    <div class="col-md-4 col-sm-12">
+                                        <label for="basic-url1">Name </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <input required type="text" value="{{ data.1 }}" id="Names" name="Name"
+                                                   class="form-control" aria-describedby="basic-addon3">
+                                            <input required type="hidden" value="{{ data.0 }}" id="storeid"
+                                                   name="store_id" class="form-control" aria-describedby="basic-addon3">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-sm-12">
+                                        <label for="basic-url1">Url </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <input required type="text" value="{{ data.3 }}" id="url_id" name="url"
+                                                   class="form-control" aria-describedby="basic-addon3">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <label for="basic-url1">Affiliate Url </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <input type="text" value="{{ data.4 }}" id="AffiliateUrls"
+                                                   name="AffiliateUrl" class="form-control"
+                                                   aria-describedby="basic-addon3">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <label for="basic-url1">Description </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <textarea rows="6" id="Descriptions" name="Description" class="form-control"
+                                                      aria-describedby="basic-addon3">{{ data.2 }}</textarea>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <ul class="ml-4" id="subInfo">
+                                            <li class="li_class">{absoluteuri}
+                                                http://www.boohoo.com/aus/boohoo-plus/icat/boohoo-plus/laura-cross-front-jumpsuit/invt/pzz99906?size=10&color=blue
+                                            </li>
+                                            <li class="li_class">{absoluteuriencoded}
+                                                http%3A%2F%2Fwww.boohoo.com%2Faus%2Fboohoo-plus%2Ficat%2Fboohoo-plus%2Flaura-cross-front-jumpsuit%2Finvt%2Fpzz99906%3Fsize%3D10%26color%3Dblue
+                                            </li>
+                                            <li class="li_class">{authority} www.boohoo.com</li>
+                                            <li class="li_class">{path}
+                                                /aus/boohoo-plus/icat/boohoo-plus/laura-cross-front-jumpsuit/invt/pzz99906
+                                            </li>
+                                            <li class="li_class">{pathandquery}
+                                                /aus/boohoo-plus/icat/boohoo-plus/laura-cross-front-jumpsuit/invt/pzz99906?size=10&color=blue
+                                            </li>
+                                            <li class="li_class">{pathandqueryencoded}
+                                                %2Faus%2Fboohoo-plus%2Ficat%2Fboohoo-plus%2Flaura-cross-front-jumpsuit%2Finvt%2Fpzz99906%3Fsize%3D10%26color%3Dblue
+                                            </li>
+                                        <li  class="li_class">{query} ?size=10&color=blue</li>
+                                        <li  class="li_class">{scheme} http</li>
+                                        <li  class="li_class">{referenceguid} a02c0488-38b5-400d-8a74-20cb7ba57b31</li>
+                                        <li  class="li_class">{referenceguidnohyphen} a02c048838b5400d8a7420cb7ba57b31</li>
+                                        <li  class="li_class"><text>{ausite:</text>value for AU site}</li>
+                                        <li  class="li_class"><text>{nzsite:</text>value for NZ site}</li>
+                                        <li  class="li_class"><text>{ussite:</text>value for US site}</li>
+                                            <li class="li_class">
+                                                <text>{customquery:</text>
+                                                abc=123} Automatically prepends '?' or '&'. Example ?abc=123 or &abc=123
+                                            </li>
+                                        </ul>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <label for="basic-url1">Currency </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <select style="width:40%;" id="CurrencyCodes" name="CurrencyCode">
+                                                <option {% if data.5 == "AUD" %} selected {% endif %} value="AUD">
+                                                    Australian Dollar
+                                                </option>
+                                                <option  {% if data.5 == "CHF" %} selected {% endif %} value="CHF">Swiss
+                                                    Franc
+                                                </option>
+                                                <option  {% if data.5 == "EUR" %} selected {% endif %} value="EUR">
+                                                    Euro
+                                                </option>
+                                                <option  {% if data.5 == "GBP" %} selected {% endif %} value="GBP">
+                                                    Greater Britain Pound
+                                                </option>
+                                                <option {% if data.5 == "NZD" %} selected {% endif %} value="NZD">New
+                                                    Zealand Dollar
+                                                </option>
+                                                <option  {% if data.5 == "USD" %} selected {% endif %} value="USD">
+                                                    United States Dollar
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input data-val="true" {% if data.6 == 1 %} checked="checked" {% endif %}
+                                               data-val-required="The AUSite field is required." id="AUSiteId"
+                                               name="AUSite" type="checkbox" value="1"/>
+                                        Australia Site
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input data-val="true" {% if data.7 == 1 %} checked="checked" {% endif %}
+                                               data-val-required="The NZSite field is required." id="NZSiteId"
+                                               name="NZSite" type="checkbox" value="1"/>
+                                        New Zealand Site
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input data-val="true"  {% if data.8 == 1 %} checked="checked" {% endif %}
+                                               data-val-required="The USSite field is required." id="USSiteId"
+                                               name="USSite" type="checkbox" value="1"/>
+                                        United States Site
+                                    </div>
+                                    <div class="col-md-8 col-sm-12 mt-2">
+                                        <label for="basic-url1">Scraper Class Name </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <input required type="text" value="{{ data.9 }}" id="ScraperClassNameId"
+                                                   name="ScraperClassName" class="form-control mr-1"
+                                                   aria-describedby="basic-addon3">
+                                            Cannot be referenced by another store
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <label for="basic-url1">Scrape Type </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <select style="width:40%;" id="ScrapeTypeCodeId" name="ScrapeTypeCode">
+                                                <option {% if data.10 == "PRF" %} selected {% endif %}  value="PRF">
+                                                    Product Feed
+                                                </option>
+                                                <option {% if data.10 == "WEB" %} selected {% endif %}  value="WEB">
+                                                    Web
+                                                </option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-sm-12 mt-2">
+                                        <label for="basic-url1">Download Thread Count </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <input required
+                                                   data-val-number="The field DownloadThreadCount must be a number."
+                                                   data-val-required="The DownloadThreadCount field is required."
+                                                   id="DownloadThreadCount" name="DownloadThreadCount" type="number"
+                                                   min="0" max="1" value="{{ data.11 }}" class="form-control mr-1"
+                                                   aria-describedby="basic-addon3">
+                                            Set 0 to disable
+                                        </div>
+                                    </div>
+                                    <div class="col-md-8 col-sm-12 ">
+                                        <label for="basic-url1">Scrape Thread Count </label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i
+                                                        class="fa  fa-list "></i></span>
+                                            </div>
+                                            <input data-val="true"
+                                                   data-val-number="The field ScrapeThreadCount must be a number."
+                                                   data-val-required="The ScrapeThreadCount field is required."
+                                                   id="ScrapeThreadCount" name="ScrapeThreadCount" type="number" min="0"
+                                                   max="1" value="{{ data.12 }}" class="form-control mr-1"
+                                                   aria-describedby="basic-addon3">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input data-val="true" {% if data.13 == 1 %} checked="checked" {% endif %}
+                                               data-val-required="The MergeProductSize field is required."
+                                               id="MergeProductSizes" name="MergeProductSize" type="checkbox"
+                                               value="1"/> Merge Product Size
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input data-val="true" {% if data.14 == 1 %} checked="checked" {% endif %}
+                                               data-val-required="The NoReferrer field is required." id="NoReferrers"
+                                               name="NoReferrer" type="checkbox" value="1"/> NoReferrer (Use
+                                        rel="noreferrer" on product links)
+                                    </div>
+                                    <div class="col-md-12 col-sm-12">
+                                        <input data-val="true" {% if data.15 == 1 %} checked="checked" {% endif %}
+                                               data-val-required="The Hidden field is required." id="Hiddens"
+                                               name="Hidden" type="checkbox" value="1"/> Hidden (Store name will not be
+                                        displayed in Home/StoreList page and search suggest. Store will not be found by
+                                        text search.)
+                                    </div>
+                                </div>
+                                <div class="form-row pull-left mt-2 p-0">
+                                    <div class="">
+                                        <input type="submit" class="btn btn-warning" value="Submit">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            {%endif%}
+            <!-- page end-->
+        </section>
+    </section>
+    <!--main content end-->
+    <!-- Right Slidebar start -->
+    <!-- Right Slidebar end -->
+    {% include 'Footer.html' %}
+    <!--footer end-->
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+<script src="{% static 'js/jquery.js' %}"></script>
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery.scrollTo.min.js' %}"></script>
+<script src="{% static 'js/jquery.nicescroll.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script class="include" type="text/javascript" src="{% static 'js/jquery.dcjqaccordion.2.7.js' %}"></script>
+<!--custom switch-->
+<script src="{% static 'js/bootstrap-switch.js' %}"></script>
+<!--custom tagsinput-->
+<script src="{% static 'js/jquery.tagsinput.js' %}"></script>
+<!--custom checkbox & radio-->
+<script src="{% static 'js/advanced-form-components.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/bootstrap-inputmask/bootstrap-inputmask.min.js' %}"></script>
+<script src="{% static 'js/respond.min.js' %}" ></script>
+
+<!--right slidebar-->
+<script src="{% static 'js/slidebars.min.js' %}"></script>
+<!--common script for all pages-->
+<script src="{% static 'js/common-scripts.js' %}"></script>
+
+<!--script for this page-->
+<script src="{% static 'js/form-component.js' %}"></script>
+<link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+<script src="{%  static 'js/select2.min.js' %}"></script>
+<script src="{% static 'jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+
+<script>
+$(document).ready(function(){
+  $(".js-example-basic-multiple").select2();
+});//document ready
+$(document).ready(function() {
+  $selectElement = $('.js-example-basic-multiple').select2({
+    placeholder: "Select the Stores",
+    allowClear: true
+  });
+});
+
+
+function selectAll() {
+    $(".js-example-basic-multiple > option").prop("selected", true);
+    $(".js-example-basic-multiple").trigger("change");
+}
+
+function deselectAll() {
+    $(".js-example-basic-multiple > option").prop("selected", false);
+    $(".js-example-basic-multiple").trigger("change");
+}
+</script>
+</body>
+</html>

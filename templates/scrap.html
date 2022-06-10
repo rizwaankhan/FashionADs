@@ -1,0 +1,348 @@
+{% load static %}
+{% load i18n %}
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="Ammar">
+    <meta name="keyword" content="Dashboard, Admin">
+    <link rel="shortcut icon" href="{% static 'img/favicon.png' %}">
+    <title> {% blocktrans %}Scrap{% endblocktrans %}</title>
+    <!-- Bootstrap core CSS -->
+    <link href="{% static 'css/bootstrap-reset.css' %}" rel="stylesheet">
+    <!--external css-->
+    <link href="{% static 'assets/font-awesome/css/font-awesome.css' %}" rel="stylesheet" />
+    <!--    <link rel="icon" href="{% static session.Icon %}?v=2" type="image/png"  sizes="16x16" />-->
+    <!--right slidebar-->
+    <link href="{% static 'css/slidebars.css' %}" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <link href="{% static 'css/style-responsive.css' %}" rel="stylesheet" />
+    <script src="{%  static 'sweetalert/sweetalert.min.js' %}"></script>
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+
+</head>
+<body>
+<section id="container" class="">
+    <!--header start-->
+    <header class="header white-bg">
+        {% include 'header_menu_admin.html' %}
+    </header>
+    <!--header end-->
+    <!--sidebar start-->
+    {% include 'side_menu_admin.html' %}
+    <!--sidebar end-->
+    <!--main content start-->
+    <section id="main-content">
+        <section class="wrapper">
+            <!-- page start-->
+            {% if msg %}
+            <div id="container-flip" >
+                <div>{{msg|safe}}</div>
+            </div>
+            {% else %}
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="card">
+                        <header class="card-header">
+                            {% blocktrans %} {{ Title }}{% endblocktrans %}
+                        </header>
+                        <div class="card-body">
+                            {% if messages %}
+                            <div class="col-12">
+                                {% for message in messages %}
+                                <div class="alert alert-dismissible fade show {{ message.tags }}" id="alert" role="alert">
+                                    {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %}Important: {% endif %}
+                                    <strong> {{ message }} <i class="fa {{ message.tags }} bold fa-lg ml-2"></i></strong>
+                                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                            <form action="{% url 'scrape'%}"  id="file-upload-form"  method="post" >
+                                <input id="submit-hidden" type="submit" style="display: none" />
+                                <div class="form-row">
+                                    <b class="ml-1 mb-2">Scrape by Url (does not update)</b>
+                                </div>
+                                <div class="form-row">
+                                    {% csrf_token %}
+                                    <div class="col-md-6 col-sm-12" >
+                                        <label for="basic-url1">Product Url</label>
+                                        <div class="input-group mb-3">
+                                            <div class="input-group-prepend">
+                                                <span class="input-group-text" id="basic-addon1"><i class="fa  fa-list "></i></span>
+                                            </div>
+                                            <input style="height:39px;" required  type="text" id="ProductUrls" name="ProductUrl" class="form-control"  aria-describedby="basic-addon3">
+                                            <input   type="hidden" id="tokens" name="token_name" class="form-control"  value="{{token}}" aria-describedby="basic-addon3">
+                                            <div class="form-row pull-left">
+                                                <div class="">
+                                                    <input type="submit" id="ScrapButton" formaction="{% url 'scrape'  %}"  class="btn btn-warning" value="Scrape by Url ">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="JsonError" style="display:none " class="col-md-6 col-sm-12 mt-4" >
+                                        <div class="row" style="color:red;" >
+                                            <div class="col-md-12 col-sm-12" >
+                                                <span id="json_url"></span>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" >
+                                                <span id="json_msg"></span>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" >
+                                                <span id="json_traceback"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="JsonDiv" style="display:none" class="col-md-6 col-sm-12 mt-4" >
+                                        <div class="row">
+                                            <div class="col-md-6 col-sm-12" >
+                                                <b>Name:</b> <span id="json_name">  </span>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12" >
+                                                <b>Price:</b><span id="json_price">   </span>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12" >
+                                                <b>Brand:</b> <span id="json_brand" ></span>
+                                            </div>
+                                            <div class="col-md-6 col-sm-12" >
+                                                <b>Sale Price:</b>  <span id="json_saleprice">   </span>
+                                            </div>
+
+                                            <div class="col-md-12 col-sm-12" >
+                                                <!--                                                <b>Sizes:</b>-->
+                                                <div id="json_size"></div>
+
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" >
+                                                <b>Image:</b><a target="_blank" href="" id="json_image"></a>
+                                            </div>
+                                            <div class="col-md-12 col-sm-12" >
+                                                <b>Description:</b><span id="json_description"></span>
+                                            </div>
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-12">
+                    <section class="card">
+                        <div class="card-body">
+                            <form action="{% url 'scrape'%}"  id="file-upload-form"  method="post" >
+                                <input id="submit-hidden" type="submit" style="display: none" />
+                                <div class="form-row">
+                                    {% csrf_token %}
+                                    <div class="col-md-12 col-sm-12" >
+                                        <header class="card-header pl-0">
+                                            Scrape Stores
+                                        </header>
+                                        <br>
+                                        <select  id="storeIds" name="storeId" class="js-example-basic-multiple" multiple="multiple">
+                                            <option disabled value="">Select Stores</option>
+                                            {% for r in data %}
+                                            <option {% if r.0 == storeId %} selected {% endif %} value="{{r.0}}">{{r.1}} - {{r.2}}</option>
+                                            {%endfor%}
+                                        </select>
+                                        <input   type="hidden" id="tokens" name="token_name" class="form-control"  value="{{token}}" aria-describedby="basic-addon3">
+
+                                        <div class="button-container mt-2">
+                                            <button class="btn btn-info btn-sm " type="button" onclick="selectAll()">Select All</button>
+                                            <button class="btn btn-info btn-sm ml-2" type="button" onclick="deselectAll()">Deselect All</button>
+                                        </div>
+                                        <!--                                        <input type="button" id="button" value="check Selected">-->
+                                        <header class="card-header pl-0">
+                                            Scrape Settings
+                                        </header>
+                                        <br>
+                                        <div>
+                                            Scrape New Urls <input checked="checked" data-val="true" data-val-required="The ScrapeNewUrl field is required." id="ScrapeNewUrl" name="ScrapeNewUrl" type="checkbox" value="true" />
+                                        </div>
+                                        <div>
+                                            Scrape Existing Urls Not Updated More Than <input data-val="true" data-val-number="The field ScrapeExistingUrlAgeInHour must be a number." id="ScrapeExistingUrlAgeInHour" name="ScrapeExistingUrlAgeInHour" style="width:50px" type="text" value="0" /> Hours. <i>*Blank To Not Scrape Any Existing Urls. 0 To Scrape All Existing Urls</i>
+                                        </div>
+
+                                        <div>
+                                            Concurrent Scraper Thread Count <input data-val="true" data-val-number="The field ScraperThreadCount must be a number." data-val-required="The ScraperThreadCount field is required." id="ScraperThreadCount" name="ScraperThreadCount" style="width:50px" type="text" value="30" />
+                                        </div>
+                                        <div>
+                                            Send Scrape Result Summary <input checked="checked" data-val="true" data-val-required="The SendScrapeResultSummary field is required." id="SendScrapeResultSummary" name="SendScrapeResultSummary" type="checkbox" value="true" /><input name="SendScrapeResultSummary" type="hidden" value="false" />
+                                        </div>
+                                        <header class="card-header pl-0">
+                                            When Scraping is Complete
+                                        </header>
+                                        <br>
+                                        <div>Delete Products Not Updated More Than <input data-val="true" data-val-number="The field DeleteProductAgeInDay must be a number." id="DeleteProductAgeInDay" name="DeleteProductAgeInDay" style="width:50px" type="text" value="" /> Days. <i>*Blank To Not Delete Any Products. Min. 3 Days</i></div>
+                                        <div>Reindex <input data-val="true" data-val-required="The Reindex field is required." id="Reindex" name="Reindex" type="checkbox" value="true" /><input name="Reindex" type="hidden" value="false" /></div>
+                                        <div>Upload Index <input data-val="true" data-val-required="The UploadIndex field is required." id="UploadIndex" name="UploadIndex" type="checkbox" value="true" /><input name="UploadIndex" type="hidden" value="false" /></div>
+                                        <div>Delete Old Index <input data-val="true" data-val-required="The DeleteOldIndex field is required." id="DeleteOldIndex" name="DeleteOldIndex" type="checkbox" value="true" /><input name="DeleteOldIndex" type="hidden" value="false" /></div>
+                                        <div>Check Store For Scrape Alert <input data-val="true" data-val-required="The CheckStoreForScrapeAlert field is required." id="CheckStoreForScrapeAlert" name="CheckStoreForScrapeAlert" type="checkbox" value="true" /><input name="CheckStoreForScrapeAlert" type="hidden" value="false" /></div>
+                                        <br />
+                                        <div class="form-row pull-left">
+                                            <div class="">
+                                                <input type="submit" formaction="{% url 'scrape'  %}"  class="btn btn-warning" value="Scrape Stores ">
+                                            </div>
+                                        </div>
+                                        <input type="hidden" value= "{{ data.0.0 }}" id="hiddenids" name="hiddenid" class="form-control"  aria-describedby="basic-addon3">
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+            {%endif%}
+            <!-- page end-->
+        </section>
+    </section>
+    <!--main content end-->
+    <!-- Right Slidebar start -->
+    <!-- Right Slidebar end -->
+    {% include 'Footer.html' %}
+
+    <!--footer end-->
+</section>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/core-js/2.4.1/core.js"></script>
+<script src="{% static 'js/jquery.js' %}"></script>
+<!-- js placed at the end of the document so the pages load faster -->
+<script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'js/jquery.scrollTo.min.js' %}"></script>
+<script src="{% static 'js/jquery.nicescroll.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery-ui.min.js' %}"></script>
+<script class="include" type="text/javascript" src="{% static 'js/jquery.dcjqaccordion.2.7.js' %}"></script>
+<!--custom switch-->
+<script src="{% static 'js/bootstrap-switch.js' %}"></script>
+<!--custom tagsinput-->
+<script src="{% static 'js/jquery.tagsinput.js' %}"></script>
+<!--custom checkbox & radio-->
+<script src="{% static 'js/advanced-form-components.js' %}"></script>
+<script type="text/javascript" src="{% static 'assets/bootstrap-inputmask/bootstrap-inputmask.min.js' %}"></script>
+<script src="{% static 'js/respond.min.js' %}" ></script>
+
+<!--right slidebar-->
+<script src="{% static 'js/slidebars.min.js' %}"></script>
+<!--common script for all pages-->
+<script src="{% static 'js/common-scripts.js' %}"></script>
+
+<!--script for this page-->
+<!--<script src="{% static 'js/form-component.js' %}"></script>-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>-->
+<link href="{% static 'css/select2.min.css' %}" rel="stylesheet" />
+<script src="{%  static 'js/select2.min.js' %}"></script>
+<script src="{% static 'jquery.min.js' %}"></script>
+<script src="{% static 'js/bootstrap.min.js' %}"></script>
+
+
+
+</body>
+<script>
+$(document).ready(function(){
+  $(".js-example-basic-multiple").select2();
+});//document ready
+$(document).ready(function() {
+  $selectElement = $('.js-example-basic-multiple').select2({
+    placeholder: "Select the Stores",
+    allowClear: true
+  });
+});
+
+
+function selectAll() {
+    $(".js-example-basic-multiple > option").prop("selected", true);
+    $(".js-example-basic-multiple").trigger("change");
+}
+
+function deselectAll() {
+    $(".js-example-basic-multiple > option").prop("selected", false);
+    $(".js-example-basic-multiple").trigger("change");
+}
+if ('{{session.send_ajax}}' == 'True')
+{
+var interval = null;
+<!--interval = setInterval( FetchProducts,10000 );-->
+interval = setInterval( FetchProducts,10000 );
+}
+function FetchProducts()
+{
+    try {
+        $.ajax({
+            type: 'POST',
+            url: 'GetProductResults',
+            dataType: 'json',
+            async: true,
+            data:
+            {
+                'csrfmiddlewaretoken': $('[name="csrfmiddlewaretoken"]').val(),
+            },
+            success: function (json) {
+            if(json.msg=='True'){
+                $('#json_name').text(json.data[0]);
+                $('#json_price').text(json.data[2]);
+                $('#json_saleprice').text(json.data[3]);
+                $('#json_brand').text(json.data[5]);
+                try{
+                  var img_string=toString(json.data[7]);
+                  single_img=((json.data[7]).toString().split(','))[0];
+
+                }
+                 catch (e) {
+                    var single_img=json.data[7]
+                }
+                $('#json_image').text(single_img);
+                $("#json_image").attr("href", single_img);
+                $('#json_description').text(json.data[6]);
+                let div_string='';
+                for (let i = 0; i < json.data[8].length; i++) {
+                    color=json.data[8][i][0];
+                    size=json.data[8][i][1];
+                    availability=json.data[8][i][2];
+                    div_string+='<div>\n' +
+                         '<b>Color:</b> '+json.data[8][i][0]+' <b>Size:</b> '+json.data[8][i][1]+' <b>Available:</b> '+json.data[8][i][2]+'\n' +
+                         '</div>\n' ;
+                }
+                $('#json_size').prepend(div_string);
+                $('#JsonDiv').show();
+                $('#alert').hide();
+                clearInterval(interval); // stop the interval
+
+            }
+            if(json.msg=='Out of stock.'){
+                $('#json_url').text('This product is Out of stock.');
+                $('#json_msg').text('url: ' +json.data[6]);
+                $('#JsonError').show();
+                $('#alert').hide();
+                clearInterval(interval); // stop the interval
+                }
+
+            if(json.msg=='Error'){
+                $('#json_url').text('An error occurred while scrapping product url: ' +json.data[6]);
+                $('#json_msg').text(json.data[1]);
+                $('#json_traceback').text(json.data[3]+'\n' +json.data[4]+'\n'+json.data[5] );
+                $('#JsonError').show();
+                $('#alert').hide();
+            clearInterval(interval); // stop the interval
+
+            }
+
+            }
+        });
+
+    }
+    catch (e) {
+        console.log(e.message);
+    }
+}
+
+
+</script>
+</html>

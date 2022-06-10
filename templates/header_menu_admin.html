@@ -1,0 +1,22 @@
+{% load static  %}
+{% load i18n %}
+<div class="sidebar-toggle-box">
+    <i class="fa fa-bars"></i>
+</div>
+<!--logo start-->
+<a href="{% url 'admin_index' %}" class="logo"><span>Admin Panel</span></a>
+
+
+<div class="top-nav ">
+    <!--search & user info start-->
+    <ul class="nav pull-right top-menu">
+
+        <li class="dropdown">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+
+                <span class="username">Login as {{ session.displayname}}</span>
+            </a>
+
+        </li>
+    </ul>
+</div>

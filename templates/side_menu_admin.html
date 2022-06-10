@@ -1,0 +1,65 @@
+<div id="sidebar"  class="nav-collapse super_admin_side_menu">
+    <!-- sidebar menu start-->
+    <ul class="superadmin sidebar-menu" id="nav-accordion">
+        <li>
+            <a class="" href="{% url 'scrape' %}?countryCode=AU">
+                <i class="fa fa-cog"></i>
+                <span title="Scrape">Scrape</span>
+            </a>
+        </li>
+
+        <li>
+            <a class="" href="{% url 'ScrapeResultList' %}">
+                <i class="fa fa-cog"></i>
+                <span title="Scrape Results"> Scrape Results</span>
+            </a>
+        </li>
+
+        <li>
+            <a class="" href="{% url 'Store' %}">
+                <i class="fa fa-cog"></i>
+                <span title="Store"> Store</span>
+            </a>
+        </li>
+        <li>
+            <a class="" href="{% url 'StoreList' %}">
+                <i class="fa fa-cog"></i>
+                <span title="Store List"> Store List</span>
+            </a>
+        </li>
+        <li>
+            <a class="" href="{% url 'brand_list' %}">
+                <i class="fa fa-cog"></i>
+                <span title="Brand List"> Brand List</span>
+            </a>
+        </li>
+
+        <li>
+            <a class="" href="{% url 'product_list' %}">
+                <i class="fa fa-cog"></i>
+                <span title="Product List"> Product List</span>
+            </a>
+        </li>
+        <li>
+            <a class="" href="{% url 'product_size_list' %}">
+                <i class="fa fa-cog"></i>
+                <span title="Product Size List"> Product Size List</span>
+            </a>
+        </li>
+
+        <li>
+            <a class="" href="{% url 'ScrapAlertList' %}">
+                <i class="fa fa-cog"></i>
+                <span title="ScrapAlertList"> Scrap Alert List</span>
+            </a>
+        </li>
+
+        <li>
+            <a class="" href="{% url 'logout_admin' %}">
+                <i class="fa fa-user"></i>
+                <span title="Log Out"> Log Out</span>
+            </a>
+        </li>
+
+    </ul>
+</div>
