@@ -46,15 +46,11 @@ class LoftScrapper(Spider_BaseClass):
                     categorylink = store_url.rstrip('/') + categorylink
                 # =================== BREADCRUM ===================3
                 category = topCategoryTitle + " " + categoryTitle
-                print(category)
                 # ======================================#
                 self.listing(categorylink, category)
         return Spider_BaseClass.AllProductUrls
 
     def listing(self, categorylink, category):
-        # CategoryLinkResponse = requests.get(categorylink)
-        # categoryPageResponse = HtmlResponse(url=categorylink, body=CategoryLinkResponse.text, encoding='utf-8',
-        #                                     headers=Spider_BaseClass.headersDict)
         categoryPageResponse = SeleniumResponse(categorylink)
         product_list = categoryPageResponse.xpath(
             "//div[@class='product-wrap']/div/a/@href").extract()
@@ -198,4 +194,4 @@ class LoftScrapper(Spider_BaseClass):
 
     def GetCategory(self, response):
         siteMapCategory = str(Spider_BaseClass.ProductUrlsAndCategory.get(GetterSetter.ProductUrl)).replace('None', '')
-        return 'Women ' + siteMapCategory
+        return siteMapCategory

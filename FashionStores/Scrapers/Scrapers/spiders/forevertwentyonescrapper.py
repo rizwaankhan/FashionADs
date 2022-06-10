@@ -23,49 +23,46 @@ class ForeverTwentyoneScrapper(Spider_BaseClass):
         return spider
 
     def GetProductUrls(self, homePageResponse):
-        # ========== Category And Subcategory ==========#
-        # seleniumResponse = SeleniumResponse(store_url)
-        # topCategoryNodes = seleniumResponse.xpath(
-        #     "//ul[contains(@class,'header-flyout__list level-1')]/li[a/following-sibling::label[contains(text(),"
-        #     "'Women') or contains(text(),'Plus') or contains(text(),'Men') or contains(text(),'Girl') or contains("
-        #     "text(),'Sale')]]")
-        # for topCategoryNode in topCategoryNodes:
-        #     topCategoryTitle = topCategoryNode.xpath("./a/following-sibling::label/text()").get().strip()
-        #     topCategorylink = topCategoryNode.xpath("./a/@href").get()
-        #     if not topCategorylink.startswith(store_url):
-        #         topCategorylink = store_url.rstrip('/') + topCategorylink
-        #
-        #     categoryNodes = topCategoryNode.xpath(
-        #         """./div[@aria-label='Sub menu']/ul/li[contains(@class,'header-flyout__column level-2 ')][a[contains(
-        #         text(),'New') or contains(text(),'Clothing') or contains(text(),"Women's") or contains(text(),
-        #         "Men's") and not(contains(text(),'Accessories')) or contains(text(),'Plus + Curve') and not(contains(
-        #         text(),'Shop All')) or contains(text(),'Kids')]]""")
-        #     for categoryNode in categoryNodes:
-        #         categoryTitle = categoryNode.xpath("./a/text()").get().strip()
-        #         categorylink = categoryNode.xpath("./a/@href").get()
-        #         if not categorylink.startswith(store_url):
-        #             categorylink = store_url.rstrip('/') + categorylink
-        #
-        #         subCategoryNodes = categoryNode.xpath(
-        #             "./ul/li/a[contains(text(),'Dress') or contains(text(),'New') or contains(text(),'Rompers + Jumpsuits')]")
-        #         for subCategoryNode in subCategoryNodes:
-        #             subCategoryTitle = subCategoryNode.xpath("./text()").get().strip()
-        #             subCategorylink = subCategoryNode.xpath("./@href").get()
-        #             if not subCategorylink.startswith(store_url):
-        #                 subCategorylink = store_url.rstrip('/') + subCategorylink
-        #             if (topCategoryTitle == 'Sale' or topCategoryTitle == 'Girls + Boys') and (
-        #                     categoryTitle == 'Kids' or categoryTitle == 'Shop All Girls + Boys'):
-        #                 category = topCategoryTitle + " " + categoryTitle + " " + subCategoryTitle
-        #             else:
-        #                 if 'Women' in topCategoryTitle:
-        #                     category = topCategoryTitle + " " + categoryTitle + " " + subCategoryTitle
-        #                 else:
-        #                     category = 'Women ' + topCategoryTitle + " " + categoryTitle + " " + subCategoryTitle
-        #             self.listing(subCategorylink, category)
-        url = 'https://www.forever21.com/us/2000459654.html'
-        Spider_BaseClass.ProductUrlsAndCategory[url] = 'Women'
-        Spider_BaseClass.AllProductUrls.append(url)
-        return Spider_BaseClass.AllProductUrls
+        # ========== Category And Subcategory ========== #
+        seleniumResponse = SeleniumResponse(store_url)
+        topCategoryNodes = seleniumResponse.xpath(
+            "//ul[contains(@class,'header-flyout__list level-1')]/li[a/following-sibling::label[contains(text(),"
+            "'Women') or contains(text(),'Plus') or contains(text(),'Men') or contains(text(),'Girl') or contains("
+            "text(),'Sale')]]")
+        for topCategoryNode in topCategoryNodes:
+            topCategoryTitle = topCategoryNode.xpath("./a/following-sibling::label/text()").get().strip()
+            topCategorylink = topCategoryNode.xpath("./a/@href").get()
+            if not topCategorylink.startswith(store_url):
+                topCategorylink = store_url.rstrip('/') + topCategorylink
+
+            categoryNodes = topCategoryNode.xpath(
+                """./div[@aria-label='Sub menu']/ul/li[contains(@class,'header-flyout__column level-2 ')][a[contains(
+                text(),'New') or contains(text(),'Clothing') or contains(text(),"Women's") or contains(text(),
+                "Men's") and not(contains(text(),'Accessories')) or contains(text(),'Plus + Curve') and not(contains(
+                text(),'Shop All')) or contains(text(),'Kids')]]""")
+            for categoryNode in categoryNodes:
+                categoryTitle = categoryNode.xpath("./a/text()").get().strip()
+                categorylink = categoryNode.xpath("./a/@href").get()
+                if not categorylink.startswith(store_url):
+                    categorylink = store_url.rstrip('/') + categorylink
+
+                subCategoryNodes = categoryNode.xpath(
+                    "./ul/li/a[contains(text(),'Dress') or contains(text(),'New') or contains(text(),'Rompers + Jumpsuits')]")
+                for subCategoryNode in subCategoryNodes:
+                    subCategoryTitle = subCategoryNode.xpath("./text()").get().strip()
+                    subCategorylink = subCategoryNode.xpath("./@href").get()
+                    if not subCategorylink.startswith(store_url):
+                        subCategorylink = store_url.rstrip('/') + subCategorylink
+                    if (topCategoryTitle == 'Sale' or topCategoryTitle == 'Girls + Boys') and (
+                            categoryTitle == 'Kids' or categoryTitle == 'Shop All Girls + Boys'):
+                        category = topCategoryTitle + " " + categoryTitle + " " + subCategoryTitle
+                    else:
+                        if 'Women' in topCategoryTitle:
+                            category = topCategoryTitle + " " + categoryTitle + " " + subCategoryTitle
+                        else:
+                            category = 'Women ' + topCategoryTitle + " " + categoryTitle + " " + subCategoryTitle
+
+                    self.listing(subCategorylink, category)
 
     def listing(self, categorylink, category):
         categoryLinkResponse = SeleniumResponse(categorylink)
@@ -122,8 +119,8 @@ class ForeverTwentyoneScrapper(Spider_BaseClass):
         if ignorProduct == True:
             self.ProductIsOutofStock(GetterSetter.ProductUrl)
         categoryAndName = self.GetCategory(response) + " " + self.GetName(response)
-        if (re.search('sale', categoryAndName, re.IGNORECASE) or
-            re.search('new arrival', categoryAndName, re.IGNORECASE)) and not \
+        if (re.search(r'\b' + 'Sale' + r'\b', categoryAndName, re.IGNORECASE) or
+            re.search(r'\b' + 'New Arrivals' + r'\b', categoryAndName, re.IGNORECASE)) and not \
                 re.search(r'\b((shirt(dress?)|jump(suit?)|dress|gown|romper|suit|caftan)(s|es)?)\b', categoryAndName,
                           re.IGNORECASE):
             print('Skipping Non Dress Product')
@@ -188,9 +185,9 @@ class ForeverTwentyoneScrapper(Spider_BaseClass):
             "//button[contains(@class,'product-attribute__swatch swatch--size') and contains(@class,'selectable')]/text()").extract()
         gender = ProductFilters.objects.get(ProductUrl=GetterSetter.ProductUrl).ParentCategory.split(',')[0]
         for sizeName in sizeOptions:
-            fitType = GetFitType(gender, str(sizeName).replace('\n',''))
+            fitType = GetFitType(gender, str(sizeName).replace('\n', ''))
             available = True
-            sizelist = str(colorName), str(sizeName).replace('\n',''), available, str(fitType), 0.0, 0.0
+            sizelist = str(colorName), str(sizeName).replace('\n', ''), available, str(fitType), 0.0, 0.0
             print(sizelist)
             productSizes.append(sizelist)
         return productSizes
